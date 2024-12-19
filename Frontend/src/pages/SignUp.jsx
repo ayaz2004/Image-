@@ -1,8 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaPhone, FaGraduationCap } from "react-icons/fa";
 import { Button, Select, TextInput, Label } from "flowbite-react";
 
 export default function SignUpForm() {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    currentClass: "",
+    targetExam: "",
+    targetYear: "",
+  });
+
+  const [message, setMessage] = useState({ type: "", content: "" });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage({ type: "", content: "" }); // Reset messages
+
+    try {
+      const response = await fetch("http://localhost:5000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          content: "User registered successfully!",
+        });
+        setFormData({
+          username: "",
+          email: "",
+          phone: "",
+          currentClass: "",
+          targetExam: "",
+          targetYear: "",
+        });
+      } else {
+        setMessage({
+          type: "error",
+          content: data.error || "Failed to register user",
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: "error",
+        content: "An error occurred. Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -11,8 +72,21 @@ export default function SignUpForm() {
           Sign Up
         </h2>
 
+        {/* Success/Error Message */}
+        {message.content && (
+          <div
+            className={`mb-4 p-2 text-center rounded ${
+              message.type === "success"
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
+            {message.content}
+          </div>
+        )}
+
         {/* Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Group for Username, Email, and Phone */}
           <div className="space-y-4">
             {/* Username */}
@@ -29,6 +103,8 @@ export default function SignUpForm() {
                   placeholder="Enter your username"
                   required
                   className="pl-10"
+                  value={formData.username}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -48,6 +124,8 @@ export default function SignUpForm() {
                   placeholder="Enter your email"
                   required
                   className="pl-10"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -68,6 +146,8 @@ export default function SignUpForm() {
                   placeholder="Enter your phone number"
                   required
                   className="rounded-l-none"
+                  value={formData.phone}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -76,13 +156,20 @@ export default function SignUpForm() {
           {/* Currently Studying */}
           <div>
             <Label
-              htmlFor="class"
+              htmlFor="currentClass"
               value="Currently studying in *"
               className="text-gray-700"
             />
             <div className="relative">
               <FaGraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Select id="class" required className="pl-10">
+              <Select
+                id="currentClass"
+                required
+                className="pl-10"
+                value={formData.currentClass}
+                onChange={handleChange}
+              >
+                <option value="">Select Class</option>
                 <option value="class 6">class 6</option>
                 <option value="class 7">class 7</option>
                 <option value="class 8">class 8</option>
@@ -98,11 +185,17 @@ export default function SignUpForm() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label
-                htmlFor="exam"
+                htmlFor="targetExam"
                 value="Target Exam *"
                 className="text-gray-700"
               />
-              <Select id="exam" required>
+              <Select
+                id="targetExam"
+                required
+                value={formData.targetExam}
+                onChange={handleChange}
+              >
+                <option value="">Select Exam</option>
                 <option value="XIth Entrance">XIth Entrance</option>
                 <option value="NEET">NEET</option>
                 <option value="JEE">JEE</option>
@@ -110,11 +203,17 @@ export default function SignUpForm() {
             </div>
             <div>
               <Label
-                htmlFor="year"
+                htmlFor="targetYear"
                 value="Target Year *"
                 className="text-gray-700"
               />
-              <Select id="year" required>
+              <Select
+                id="targetYear"
+                required
+                value={formData.targetYear}
+                onChange={handleChange}
+              >
+                <option value="">Select Year</option>
                 <option value="2025">2025</option>
                 <option value="2026">2026</option>
                 <option value="2027">2027</option>
