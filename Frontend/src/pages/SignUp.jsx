@@ -1,11 +1,18 @@
 import React, { useState } from "react";
-import { FaUser, FaEnvelope, FaPhone, FaGraduationCap } from "react-icons/fa";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaGraduationCap,
+  FaLock,
+} from "react-icons/fa";
 import { Button, Select, TextInput, Label } from "flowbite-react";
 
 export default function SignUpForm() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    password: "",
     phone: "",
     currentClass: "",
     targetExam: "",
@@ -45,6 +52,7 @@ export default function SignUpForm() {
         setFormData({
           username: "",
           email: "",
+          password: "",
           phone: "",
           currentClass: "",
           targetExam: "",
@@ -87,7 +95,7 @@ export default function SignUpForm() {
 
         {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Group for Username, Email, and Phone */}
+          {/* Group for Username, Email, Password, and Phone */}
           <div className="space-y-4">
             {/* Username */}
             <div>
@@ -125,6 +133,27 @@ export default function SignUpForm() {
                   required
                   className="pl-10"
                   value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <Label
+                htmlFor="password"
+                value="Password *"
+                className="text-gray-700"
+              />
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <TextInput
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  className="pl-10"
+                  value={formData.password}
                   onChange={handleChange}
                 />
               </div>
