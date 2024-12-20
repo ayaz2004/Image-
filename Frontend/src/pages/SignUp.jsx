@@ -6,6 +6,7 @@ import {
   FaGraduationCap,
   FaLock,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { Button, Select, TextInput, Label } from "flowbite-react";
 
 export default function SignUpForm() {
@@ -20,6 +21,7 @@ export default function SignUpForm() {
   });
 
   const [message, setMessage] = useState({ type: "", content: "" });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -58,6 +60,7 @@ export default function SignUpForm() {
           targetExam: "",
           targetYear: "",
         });
+        navigate("/signin");
       } else {
         setMessage({
           type: "error",

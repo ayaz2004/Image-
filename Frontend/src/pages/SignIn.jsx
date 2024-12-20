@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import { Button, TextInput, Label } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-import { auth, signInWithEmailAndPassword } from "../firebase.js"; // Import Firebase Client SDK
+import { auth, signInWithEmailAndPassword } from "../firebase.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, setError as setAuthError } from "../redux/authSlice.js";
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const error = useSelector((state) => state.auth.error);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    setError("");
+    dispatch(setAuthError());
 
     try {
-      // Client-side sign-in using Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -23,11 +25,19 @@ export default function SignInForm() {
       );
       const user = userCredential.user;
 
-      console.log("User signed in:", user);
+      // Dispatch user data to the Redux store
+      dispatch(
+        setUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        })
+      );
 
-      navigate("/home");
+      navigate("/"); // Redirect to the home page
     } catch (err) {
-      setError(err.message);
+      dispatch(setAuthError(err.message)); // Set error in Redux store
     }
   };
 
