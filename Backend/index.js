@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import userRoutes from "./routes/userRoutes.js"; // Add `.js` extension for ES modules
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
