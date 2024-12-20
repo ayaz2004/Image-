@@ -20,6 +20,7 @@ try {
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount.default),
+    databaseURL: "https://imageclasses-960b1-default-rtdb.firebaseio.com/", // Add your Realtime Database URL here
   });
 
   console.log("Firebase Admin initialized successfully.");
@@ -28,7 +29,11 @@ try {
   process.exit(1);
 }
 
+// Firestore setup
 const db = admin.firestore();
 const auth = admin.auth();
 
-export { db, auth };
+// Realtime Database setup
+const rdb = admin.database();
+
+export { db, auth, rdb };

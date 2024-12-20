@@ -1,5 +1,6 @@
 import { auth, db } from "../firebase/firebase.js";
-
+// import { getDatabase,ref,set } from "firebase/database";
+import { rdb } from "../firebase/firebase.js";
 export const signUpUser = async (req, res) => {
   const {
     username,
@@ -25,10 +26,13 @@ export const signUpUser = async (req, res) => {
 
   try {
     const userDoc = await db.collection("users").doc(email).get();
+   
 
     if (userDoc.exists) {
       return res.status(409).json({ error: "User already exists." });
     }
+
+    
 
     const formattedPhone = `+91${phone}`;
     // Create user with Firebase Admin SDK
@@ -38,6 +42,8 @@ export const signUpUser = async (req, res) => {
       displayName: username,
       phoneNumber: formattedPhone,
     });
+
+   
 
     // Save additional details in Firestore
     await db.collection("users").doc(email).set({
@@ -49,11 +55,22 @@ export const signUpUser = async (req, res) => {
       targetYear,
     });
 
+    await rdb.ref("users").push((await auth.createUser()).uid()).set({
+      username,
+      email,
+      phone: formattedPhone,
+      currentClass,
+      targetExam,
+      targetYear,
+    })
     res
       .status(201)
       .json({ message: "User registered successfully.", user: newUser });
   } catch (error) {
+
     console.error("Error signing up user:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 };
+
+

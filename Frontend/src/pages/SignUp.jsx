@@ -42,6 +42,8 @@ export default function SignUpForm() {
         body: JSON.stringify(formData),
       });
 
+      const res = await fetch("http://localhost:5000/api/userDetails")
+      console.log(res.text())
       const data = await response.json();
 
       if (response.ok) {
